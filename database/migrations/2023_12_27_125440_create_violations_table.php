@@ -12,15 +12,18 @@ return new class extends Migration {
     {
         Schema::create('violations', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->integer('grade');
+            $table->string('lrn');
+            $table->string('firstname');
+            $table->string('middlename');
+            $table->string('lastname');
+            $table->string('sex');
+            $table->string('grade');
             $table->string('strand');
             $table->string('section');
             $table->string('violation');
             $table->string('sanction');
             $table->string('offence');
             $table->string('date_and_time');
-            $table->string('photo')->nullable();
             $table->timestamps();
         });
     }

@@ -14,7 +14,7 @@ class Violation extends Component
     use WithFileUploads, WithPagination;
     public $add_modal = false;
     public $edit_modal = false;
-    public $firstname,$grade,$strand,$section,$sanction, $violation,$offence,$date_and_time,$photo, $violation_id;
+    public $lrn,$firstname,$middlename,$lastname, $sex,$grade,$strand,$section,$sanction, $violation,$offence,$date_and_time,$photo, $violation_id;
     public $search;
     public $strand_course;
     public $students = [];
@@ -23,7 +23,7 @@ class Violation extends Component
 
         $search = '%' .$this->search. '%';
         return view('livewire.admin.violation',[
-            'violations' => violationModel::where('name', 'like', $search)->paginate(10),
+            'violations' => violationModel::where('lrn', 'like', $search)->paginate(10),
         ]);
 
 
@@ -49,7 +49,7 @@ class Violation extends Component
     {
         sleep(2);
         $this->validate([
-            'name' => 'required',
+            'firstname' => 'required',
             'strand' => 'required',
             'violation' => 'required',
             'grade' => 'required',
@@ -57,12 +57,16 @@ class Violation extends Component
             'sanction' => 'required',
             'offence' => 'required',
             'date_and_time' => 'required',
-            'photo' => 'required|max:2048',
+
 
         ]);
-        $photoPath = $this->photo->store('photos', 'public');
+
         violationModel::create([
-            'name' => $this->name,
+            'lrn' =>$this->lrn,
+            'firstname' => $this->firstname,
+            'middlename' => $this->middlename,
+            'lastname' => $this->lastname,
+            'sex' => $this->sex,
             'strand' => $this->strand,
             'violation' => $this->violation,
             'grade' => $this->grade,
@@ -70,13 +74,13 @@ class Violation extends Component
             'sanction' => $this->sanction,
             'offence' => $this->offence,
             'date_and_time' => $this->date_and_time,
-            'photo' => $photoPath,
+
 
         ]);
 
         $this->add_modal = false;
         $this->reset([
-            'name', 'strand', 'violation', 'grade', 'section', 'sanction', 'offence', 'date_and_time', 'photo', 'violation_id'
+            'firstname','lastname','middlename','sex', 'strand', 'violation', 'grade', 'section', 'sanction', 'offence', 'date_and_time', 'photo', 'violation_id'
         ]);
     }
 
@@ -85,7 +89,11 @@ class Violation extends Component
         $data = violationModel::where('id', $valueId)->first();
 
     if ($data) {
-        $this->firstname = $data->name;
+        $this->lrn = $data->lrn;
+        $this->firstname = $data->firstname;
+        $this->middlename = $data->middlename;
+        $this->lastname = $data->lastname;
+        $this->sex = $data->sex;
         $this->grade = $data->grade;
         $this->strand = $data->strand;
         $this->section = $data->section;
@@ -93,13 +101,6 @@ class Violation extends Component
         $this->sanction = $data->sanction;
         $this->offence = $data->offence;
         $this->date_and_time = $data->date_and_time;
-
-        // Check if $data->photo is an instance of Illuminate\Http\UploadedFile
-        // If not, handle the photo logic accordingly (e.g., setting a file path or null)
-        if ($data->photo instanceof \Illuminate\Http\UploadedFile) {
-            $this->photo = $data->photo;
-        }
-
         $this->violation_id = $data->id;
         $this->edit_modal = true;
     } else {
@@ -112,7 +113,11 @@ class Violation extends Component
         $data = violationModel::where('id', $this->violation_id)->first();
 
         $data->update([
-            'name' => $this->name,
+            'lrn' => $this->lrn,
+            'firstname' => $this->firstname,
+            'middlename' => $this->middlename,
+            'lastname' => $this->lastname,
+            'sex' => $this->sex,
             'strand' => $this->strand,
             'violation' => $this->violation,
             'grade' => $this->grade,
@@ -124,38 +129,44 @@ class Violation extends Component
 
         if ($this->offence == 3) {
             $data->update(['sanction' => 'warning']);
-        } else {
+        }
+
+        if ($this->offence >= 4) {
+            $data->update(['sanction' => 'penalty']);
+        }
+
+        else {
             $data->update(['sanction' => $this->sanction]);
         }
 
-        if ($this->photo instanceof \Illuminate\Http\UploadedFile) {
-            Storage::disk('public')->delete($data->photo);
-            $updateData['photo'] = $this->photo->store('photos', 'public');
-            $data->update(['photo' => $updateData['photo']]);
-        }
+
 
         $this->edit_modal = false;
         $this->reset([
-            'name', 'strand', 'violation', 'grade', 'section', 'sanction', 'offence', 'date_and_time', 'photo', 'violation_id'
+            'lrn','firstname','middlename','lastname','sex', 'strand', 'violation', 'grade', 'section', 'sanction', 'offence', 'date_and_time', 'photo', 'violation_id'
         ]);
     }
 
     public function delete($id){
         sleep(1);
         $data = violationModel::find($id);
-        Storage::disk('public')->delete($data->photo);
+
         $data->delete();
         $this->render();
     }
     public function back(){
         $this->reset([
-            'firstname', 'strand', 'violation', 'grade', 'section', 'sanction', 'offence', 'date_and_time', 'photo', 'violation_id'
+            'lrn','firstname','middlename','lastname','sex', 'strand', 'violation', 'grade', 'section', 'sanction', 'offence', 'date_and_time', 'photo', 'violation_id'
         ]);
     }
 
-    public function fillName($value, $grade,$strand_course,  $section)
+    public function fillName($value,$firstname,$middlename,$lastname, $sex, $grade,$strand_course,  $section)
     {
-        $this->firstname = $value;
+        $this->lrn = $value;
+        $this->firstname = $firstname;
+        $this->middlename = $middlename;
+        $this->lastname = $lastname;
+        $this->sex = $sex;
         $this->grade = $grade;
         $this->strand = $strand_course;
         $this->section = $section;

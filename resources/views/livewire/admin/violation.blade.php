@@ -12,7 +12,19 @@
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                     <th scope="col" class="px-6 py-3">
-                        Name
+                        Lrn
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        First Name
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Middle Name
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Last Name
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Sex
                     </th>
                     <th scope="col" class="px-6 py-3">
                         Grade
@@ -35,9 +47,7 @@
                     <th scope="col" class="px-6 py-3">
                         Date and Time
                     </th>
-                    <th scope="col" class="px-6 py-3">
-                        Photo
-                    </th>
+
                     <th scope="col" class="px-6 py-3 text-center">
                         Action
                     </th>
@@ -46,25 +56,23 @@
             <tbody>
                 @forelse($violations as $violation)
                 <tr>
-                    <td class="px-6 py-4">{{ $violation->name }}</td>
+                    <td class="px-6 py-4">{{ $violation->lrn }}</td>
+                    <td class="px-6 py-4">{{ $violation->firstname }}</td>
+                    <td class="px-6 py-4">{{ $violation->middlename }}</td>
+                    <td class="px-6 py-4">{{ $violation->lastname }}</td>
+                    <td class="px-6 py-4">{{ $violation->sex}}</td>
                     <td class="px-6 py-4">{{ $violation->grade }}</td>
                     <td class="px-6 py-4">{{ $violation->strand }}</td>
                     <td class="px-6 py-4">{{ $violation->section }}</td>
                     <td class="px-6 py-4">{{ $violation->violation }}</td>
-                    @if ($violation->sanction == "penalty")
+                    @if ( $violation->offence >= 3)
                         <td class="px-6 py-4 text-red-700 ">{{ $violation->sanction }}</td>
                     @else
-                        <td class="px-6 py-4">{{ $violation->sanction }}</td>
+                    <td class="px-6 py-4">{{ $violation->sanction }}</td>
                     @endif
                     <td class="px-6 py-4">{{ $violation->offence }}</td>
                     <td class="px-6 py-4">{{ $violation->date_and_time }}</td>
-                    <td class="px-6 py-4">
-                        @if($violation->photo)
-        <img src="{{ asset('storage/' . $violation->photo) }}" alt="Violation Photo" class="w-16 h-16">
-    @else
-        No Photo
-    @endif
-                    </td>
+
                     <td class="px-6 py-4 flex gap-2 mt-4">
                         <x-button class="w-16 h-6 space-y-2" label="edit" icon="pencil-alt" wire:click="edit({{ $violation->id }})" positive />
                         <x-button class="w-16 h-6 space-y-2" label="delete" icon="pencil-alt" wire:click="delete({{ $violation->id }})" negative />
@@ -90,19 +98,25 @@
         <x-card title="Add Modal">
             <div class="space-y-3">
                 <div class="flex gap-2">
-
-    <x-input label="Name" wire:model="name" placeholder="" autocomplete="off" wire:keyup="searchStudents" />
+    <x-input label="Lrn" wire:model="lrn" placeholder="" autocomplete="off" wire:keyup="searchStudents" />
+    <x-input label="First Name" wire:model="firstname" placeholder="" autocomplete="off" wire:keyup="searchStudents" />
 
 
     @if(count($students) > 0)
     <div class="absolute z-50 mt-2 bg-white border border-gray-300 rounded-md shadow-md w-48">
         @foreach($students as $student)
-            <div class="py-1 px-2 cursor-pointer hover:bg-gray-200" wire:click="fillName('{{ $student->firstname }}', '{{ $student->grade }}', '{{ $student->strand_course }}','{{ $student->section}}')">
-                {{ $student->firstname }}
+            <div class="py-1 px-2 cursor-pointer hover:bg-gray-200" wire:click="fillName('{{ $student->lrn }}','{{ $student->firstname }}','{{ $student->middlename }}','{{ $student->lastname }}','{{ $student->sex }}', '{{ $student->grade }}', '{{ $student->strand_course }}','{{ $student->section}}')">
+                {{ $student->lrn }}
             </div>
         @endforeach
     </div>
 @endif
+                <x-input label="Middle Name" wire:model="middlename" placeholder="" />
+                </div>
+
+                <div class="flex gap-2">
+                    <x-input label="Last Name" wire:model="lastname" placeholder="" />
+                    <x-input label="Sex" wire:model="sex" placeholder="" />
                     <x-input label="Grade" wire:model="grade" placeholder="" />
                 </div>
                 <x-input label="Strand" placeholder="" wire:model="strand" />
@@ -111,9 +125,7 @@
                 <x-input label="sanction" placeholder="" wire:model="sanction" />
                 <x-input label="Offence" wire:model="offence" placeholder="" />
                 <x-input label="Date and Time" wire:model="date_and_time" placeholder="" />
-                <div class="flex flex-col items-center justify-center">
-                <input type="file" id="imgSelect" accept="image/*" x-ref="myFile" @change="previewFile" wire:model="photo">
-                </div>
+
             </div>
 
             <x-slot name="footer">
@@ -130,7 +142,15 @@
         <x-card title="Edit Model">
             <div class="space-y-3">
               <div class="flex gap-2">
-                <x-input label="Name" wire:model="name" placeholder="" />
+                <x-input label="Lrn" wire:model="lrn" placeholder="" />
+                <x-input label="First Name" placeholder="" wire:model="firstname" />
+              </div>
+              <div class="flex gap-2">
+                <x-input label="Middle Name" wire:model="middlename" placeholder="" />
+                <x-input label="Last Name" placeholder="" wire:model="lastname" />
+              </div>
+              <div class="flex gap-2">
+                <x-input label="Sex" wire:model="sex" placeholder="" />
                 <x-input label="Grade" placeholder="" wire:model="grade" />
               </div>
                 <x-input label="Strand" placeholder="" wire:model="strand" />
@@ -144,9 +164,7 @@
 
 
                 </td>
-                <div class="flex flex-col items-center justify-center">
-                    <input type="file" id="imgSelect" accept="image/*" x-ref="myFile" @change="previewFile" wire:model="photo">
-                    </div>
+
             </div>
 
             <x-slot name="footer">
