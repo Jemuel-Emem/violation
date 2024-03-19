@@ -11,6 +11,7 @@
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
         "livewire/livewire": "^3.3",
+        "nesbot/carbon": "^2.72",
         "tallstackui/tallstackui": "^1.5",
         "wireui/wireui": "^1.18"
     },

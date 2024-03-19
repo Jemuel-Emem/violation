@@ -45,7 +45,11 @@
                         Offence
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Date and Time
+                        Date
+                    </th>
+
+                    <th scope="col" class="px-6 py-3">
+                        Time
                     </th>
 
                     <th scope="col" class="px-6 py-3 text-center">
@@ -71,7 +75,8 @@
                     <td class="px-6 py-4">{{ $violation->sanction }}</td>
                     @endif
                     <td class="px-6 py-4">{{ $violation->offence }}</td>
-                    <td class="px-6 py-4">{{ $violation->date_and_time }}</td>
+                    <td class="px-6 py-4">{{ $violation->date }}</td>
+                    <td class="px-6 py-4">{{ $violation->time }}</td>
 
                     <td class="px-6 py-4 flex gap-2 mt-4">
                         <x-button class="w-16 h-6 space-y-2" label="edit" icon="pencil-alt" wire:click="edit({{ $violation->id }})" positive />
@@ -124,7 +129,18 @@
                 <x-input label="violation" placeholder="" wire:model="violation" />
                 <x-input label="sanction" placeholder="" wire:model="sanction" />
                 <x-input label="Offence" wire:model="offence" placeholder="" />
-                <x-input label="Date and Time" wire:model="date_and_time" placeholder="" />
+                <x-datetime-picker
+                label="Date"
+                placeholder="Appointment Date"
+                wire:model.defer="date"
+
+                without-time
+            />
+            <x-time-picker
+                label="Time"
+                placeholder="12:00 AM"
+                wire:model.defer="time"
+            />
 
             </div>
 
@@ -158,7 +174,19 @@
                 <x-input label="Violation" placeholder="" wire:model="violation" />
                 <x-input label="Sanction" wire:model="sanction" placeholder="" />
                 <x-input label="Offence" wire:model="offence" placeholder="" />
-                <x-input label="Date and Time" placeholder="" wire:model="date_and_time" />
+                <x-datetime-picker
+    label="Appointment Date"
+    placeholder="Appointment Date"
+    wire:model.defer="date"
+    without-time
+
+/>
+
+<x-time-picker
+    label="AM/PM"
+    placeholder="12:00 AM"
+    wire:model.defer="time"
+/>
                 <td class="px-6 py-4">
                     {{-- {{Storage::url($violation->photo)}} --}}
 

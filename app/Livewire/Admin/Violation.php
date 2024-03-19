@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 use Livewire\WithPagination;
 use Livewire\Component;
+use Carbon\Carbon;
 use App\Models\Violation as violationModel;
 use App\Models\studentlist as students;
 use Livewire\WithFileUploads;
@@ -14,7 +15,7 @@ class Violation extends Component
     use WithFileUploads, WithPagination;
     public $add_modal = false;
     public $edit_modal = false;
-    public $lrn,$firstname,$middlename,$lastname, $sex,$grade,$strand,$section,$sanction, $violation,$offence,$date_and_time,$photo, $violation_id;
+    public $lrn,$firstname,$middlename,$lastname, $sex,$grade,$strand,$section,$sanction, $violation,$offence,$date, $time, $photo, $violation_id;
     public $search;
     public $strand_course;
     public $students = [];
@@ -47,6 +48,8 @@ class Violation extends Component
 
     public function submit()
     {
+        $currentDate = Carbon::now();
+
         sleep(2);
         $this->validate([
             'firstname' => 'required',
@@ -56,10 +59,13 @@ class Violation extends Component
             'section' => 'required',
             'sanction' => 'required',
             'offence' => 'required',
-            'date_and_time' => 'required',
+            'date' => 'required',
+            'time' => 'required',
 
 
         ]);
+
+
 
         violationModel::create([
             'lrn' =>$this->lrn,
@@ -73,14 +79,17 @@ class Violation extends Component
             'section' => $this->section,
             'sanction' => $this->sanction,
             'offence' => $this->offence,
-            'date_and_time' => $this->date_and_time,
+            'date' => $this->date,
+            'time' => $this->time,
 
 
         ]);
 
+
+
         $this->add_modal = false;
         $this->reset([
-            'firstname','lastname','middlename','sex', 'strand', 'violation', 'grade', 'section', 'sanction', 'offence', 'date_and_time', 'photo', 'violation_id'
+            'firstname','lastname','middlename','sex', 'strand', 'violation', 'grade', 'section', 'sanction', 'offence', 'date','time', 'photo', 'violation_id'
         ]);
     }
 
@@ -100,7 +109,8 @@ class Violation extends Component
         $this->violation = $data->violation;
         $this->sanction = $data->sanction;
         $this->offence = $data->offence;
-        $this->date_and_time = $data->date_and_time;
+        $this->date = $data->date;
+        $this->time = $data->time;
         $this->violation_id = $data->id;
         $this->edit_modal = true;
     } else {
@@ -123,11 +133,12 @@ class Violation extends Component
             'grade' => $this->grade,
             'section' => $this->section,
             'offence' => $this->offence,
-            'date_and_time' => $this->date_and_time,
+            'date' => $this->date,
+            'time' => $this->time,
         ]);
 
 
-        if ($this->offence == 3) {
+        if ($this->offence <=3) {
             $data->update(['sanction' => 'warning']);
         }
 
@@ -135,15 +146,13 @@ class Violation extends Component
             $data->update(['sanction' => 'penalty']);
         }
 
-        else {
-            $data->update(['sanction' => $this->sanction]);
-        }
+
 
 
 
         $this->edit_modal = false;
         $this->reset([
-            'lrn','firstname','middlename','lastname','sex', 'strand', 'violation', 'grade', 'section', 'sanction', 'offence', 'date_and_time', 'photo', 'violation_id'
+            'lrn','firstname','middlename','lastname','sex', 'strand', 'violation', 'grade', 'section', 'sanction', 'offence', 'date','time', 'photo', 'violation_id'
         ]);
     }
 
@@ -156,7 +165,7 @@ class Violation extends Component
     }
     public function back(){
         $this->reset([
-            'lrn','firstname','middlename','lastname','sex', 'strand', 'violation', 'grade', 'section', 'sanction', 'offence', 'date_and_time', 'photo', 'violation_id'
+            'lrn','firstname','middlename','lastname','sex', 'strand', 'violation', 'grade', 'section', 'sanction', 'offence', 'date','time', 'photo', 'violation_id'
         ]);
     }
 

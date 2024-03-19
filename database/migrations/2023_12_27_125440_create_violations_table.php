@@ -23,7 +23,8 @@ return new class extends Migration {
             $table->string('violation');
             $table->string('sanction');
             $table->string('offence');
-            $table->string('date_and_time');
+            $table->string('date');
+            $table->string('time');
             $table->timestamps();
         });
     }
